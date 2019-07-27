@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t kaeyz/react-test -f ./client/Dockerfile.dev ./client
+
+scripts:
+  - docker run kaeyz/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t kaeyz/multi-client ./client
+  - docker build -t kaeyz/multi-nginx ./nginx
+  - docker build -t kaeyz/multi-server ./server
+  - docker build -t kaeyz/multi-worker ./worker
+  # login to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push images to docker hub
+  - docker push kaeyz/multi-client
+  - docker push kaeyz/multi-nginx
+  - docker push kaeyz/multi-server
+  - docker push kaeyz/multi-worker
