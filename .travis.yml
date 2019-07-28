@@ -20,3 +20,16 @@ after_success:
   - docker push kaeyz/multi-nginx
   - docker push kaeyz/multi-server
   - docker push kaeyz/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-1
+  app: multicontainer_docker_app
+  env: Multidocker_env
+  bucket_name: elasticbeanstalk-us-west-1-3298475838928
+  bucket_part: multicontainer_docker_app
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secret: $AWS_SECRET_KEY
